@@ -154,8 +154,8 @@ class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
           side: const BorderSide(color: Colors.black, width: 1),
           borderRadius: BorderRadius.circular(5),
         ),
-        onTap: () async {
-          await Scrollable.ensureVisible(dataKey.currentContext!,
+        onTap: () {
+          Scrollable.ensureVisible(dataKey.currentContext!,
               curve: Curves.easeIn, duration: Durations.medium3);
           showModalBottomSheet(
               context: context,
