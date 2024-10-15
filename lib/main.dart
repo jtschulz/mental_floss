@@ -1,125 +1,197 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return const MaterialApp(
+      home: ListWheelScrollViewApp(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class ListWheelScrollViewApp extends StatefulWidget {
+  const ListWheelScrollViewApp({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<ListWheelScrollViewApp> createState() {
+    return _ListWheelScrollViewAppState();
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class EmotionCategory {
+  EmotionCategory({
+    required this.name,
+    required this.color,
+    required this.emoji,
+    required this.emotions,
+  });
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  final String name;
+  final Color color;
+  final String emoji;
+  final List<String> emotions;
+}
+
+class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
+  var _focusedIndex = 0;
+  final List<String> selectedFeelings = [];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    final List<EmotionCategory> emotions = [
+      EmotionCategory(
+        name: 'bad',
+        color: const Color.fromRGBO(39, 186, 158, 1),
+        emoji: '(◕︵◕)',
+        emotions: [
+          'tired',
+          'stressed',
+          'busy',
+          'bored',
+        ],
+      ),
+      EmotionCategory(
+          name: 'fearful',
+          color: const Color.fromRGBO(22, 163, 186, 1),
+          emoji: '(●﹏●)',
+          emotions: [
+            'scared',
+            'anxious',
+            'insecure',
+            'weak',
+            'rejected',
+            'threatened',
+          ]),
+      EmotionCategory(
+          name: 'angry',
+          color: const Color.fromRGBO(117, 117, 180, 1),
+          emoji: '(ಠ益ಠ)',
+          emotions: [
+            'let down',
+            'humiliated',
+            'insecure',
+            'weak',
+            'rejected',
+            'threatened',
+          ]),
+      EmotionCategory(
+          name: 'disgusted',
+          color: const Color.fromRGBO(172, 124, 181, 1),
+          emoji: '(๑-﹏-๑)',
+          emotions: [
+            'disapproving',
+            'disappointed',
+            'awful',
+            'repelled',
+          ]),
+      EmotionCategory(
+          name: 'sad',
+          color: const Color.fromRGBO(207, 125, 137, 1),
+          emoji: '(ಥ_ಥ)',
+          emotions: [
+            'hurt',
+            'depressed',
+            'guilty',
+            'despair',
+            'vulnerable',
+            'lonely',
+          ]),
+      EmotionCategory(
+          name: 'happy',
+          color: const Color.fromRGBO(226, 135, 109, 1),
+          emoji: '(◕‿◕✿)',
+          emotions: [
+            'optimistic',
+            'trusting',
+            'peaceful',
+            'powerful',
+            'accepted',
+            'proud',
+            'interested',
+            'content',
+            'playful',
+          ]),
+      EmotionCategory(
+        name: 'surprised',
+        color: const Color.fromRGBO(231, 165, 77, 1),
+        emoji: '( ◐ o ◑ )',
+        emotions: [
+          'excited',
+          'amazed',
+          'confused',
+          'startled',
+        ],
+      ),
+    ];
+
+    final items = Iterable<int>.generate(emotions.length).map((idx) {
+      final dataKey = GlobalKey();
+
+      return ListTile(
+        key: dataKey,
+        titleAlignment: ListTileTitleAlignment.center,
+        leading: Text(
+          emotions[idx].emoji,
+          style: const TextStyle(fontSize: 24),
+        ),
+        title: Center(
+          child: Text(
+            emotions[idx].name,
+            style: const TextStyle(
+              fontSize: 36.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        selected: _focusedIndex == idx,
+        selectedColor: emotions[idx].color,
+        tileColor: emotions[idx].color,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Colors.black, width: 1),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        onTap: () async {
+          await Scrollable.ensureVisible(dataKey.currentContext!,
+              curve: Curves.easeIn, duration: Durations.medium3);
+          showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return Wrap(
+                  children: emotions[idx].emotions.map((emotion) {
+                    return ListTile(
+                      title: Text(emotion),
+                    );
+                  }).toList(),
+                );
+              });
+        },
+      );
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('ListWheelScrollView Sample'),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        child: ListWheelScrollView.useDelegate(
+          itemExtent: 150,
+          physics: const FixedExtentScrollPhysics(),
+          overAndUnderCenterOpacity: 0.5,
+          // magnification: 1.1,
+          childDelegate: ListWheelChildLoopingListDelegate(
+            children: items,
+          ),
+          onSelectedItemChanged: (index) {
+            setState(() {
+              _focusedIndex = index;
+            });
+          },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
