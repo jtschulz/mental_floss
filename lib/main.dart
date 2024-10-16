@@ -38,11 +38,11 @@ class EmotionCategory {
 
 class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
   var _focusedIndex = 0;
-  final List<String> selectedFeelings = [];
+  Set<String> selectedEmotions = {};
 
   @override
   Widget build(BuildContext context) {
-    final List<EmotionCategory> emotions = [
+    final List<EmotionCategory> emotionCategories = [
       EmotionCategory(
         name: 'bad',
         color: const Color.fromRGBO(39, 186, 158, 1),
@@ -128,19 +128,19 @@ class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
       ),
     ];
 
-    final items = Iterable<int>.generate(emotions.length).map((idx) {
+    final items = Iterable<int>.generate(emotionCategories.length).map((idx) {
       final dataKey = GlobalKey();
 
       return ListTile(
         key: dataKey,
         titleAlignment: ListTileTitleAlignment.center,
         leading: Text(
-          emotions[idx].emoji,
+          emotionCategories[idx].emoji,
           style: const TextStyle(fontSize: 24),
         ),
         title: Center(
           child: Text(
-            emotions[idx].name,
+            emotionCategories[idx].name,
             style: const TextStyle(
               fontSize: 36.0,
               fontWeight: FontWeight.w600,
@@ -148,8 +148,8 @@ class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
           ),
         ),
         selected: _focusedIndex == idx,
-        selectedColor: emotions[idx].color,
-        tileColor: emotions[idx].color,
+        selectedColor: emotionCategories[idx].color,
+        tileColor: emotionCategories[idx].color,
         shape: RoundedRectangleBorder(
           side: const BorderSide(color: Colors.black, width: 1),
           borderRadius: BorderRadius.circular(5),
@@ -160,13 +160,53 @@ class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
           showModalBottomSheet(
               context: context,
               builder: (context) {
-                return Wrap(
-                  children: emotions[idx].emotions.map((emotion) {
-                    return ListTile(
-                      title: Text(emotion),
-                    );
-                  }).toList(),
-                );
+                return StatefulBuilder(builder: (context, setState) {
+                  void handleEmotionSelected(String emotion) {
+                    if (selectedEmotions.contains(emotion)) {
+                      selectedEmotions.remove(emotion);
+                    } else {
+                      selectedEmotions.add(emotion);
+                    }
+                    setState(() {
+                      selectedEmotions = selectedEmotions;
+                    });
+                  }
+
+                  return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const SizedBox(height: 20),
+                          Text(
+                            emotionCategories[idx].name.toUpperCase(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Wrap(
+                            spacing: 2.0,
+                            alignment: WrapAlignment.spaceEvenly,
+                            children:
+                                emotionCategories[idx].emotions.map((emotion) {
+                              if (selectedEmotions.contains(emotion)) {
+                                return FilledButton(
+                                  onPressed: () =>
+                                      handleEmotionSelected(emotion),
+                                  child: Text(emotion),
+                                );
+                              }
+                              return OutlinedButton(
+                                onPressed: () => handleEmotionSelected(emotion),
+                                style: const ButtonStyle(),
+                                child: Text(emotion),
+                              );
+                            }).toList(),
+                          )
+                        ],
+                      ));
+                });
               });
         },
       );
@@ -181,7 +221,6 @@ class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
           itemExtent: 150,
           physics: const FixedExtentScrollPhysics(),
           overAndUnderCenterOpacity: 0.5,
-          // magnification: 1.1,
           childDelegate: ListWheelChildLoopingListDelegate(
             children: items,
           ),
