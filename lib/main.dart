@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mental_floss/feelings_log_model.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(ChangeNotifierProvider(
+      create: (context) => FeelingsLogModel(),
+      child: const MyApp(),
+    ));
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -124,7 +129,6 @@ final List<EmotionCategory> emotionCategories = [
 
 class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
   var _focusedIndex = 0;
-  List<String> _selectedEmotions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -160,22 +164,13 @@ class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
           showModalBottomSheet(
             context: context,
             builder: (context) {
-              return StatefulBuilder(builder: (context, setState) {
+              return Consumer<FeelingsLogModel>(
+                  builder: (context, feelingsLog, child) {
                 void handleEmotionSelected(String emotion) {
-                  if (_selectedEmotions.contains(emotion)) {
-                    setState(() {
-                      _selectedEmotions = _selectedEmotions
-                          .where(
-                              (selectedEmotion) => selectedEmotion != emotion)
-                          .toList();
-                    });
+                  if (feelingsLog.selectedEmotions.contains(emotion)) {
+                    feelingsLog.remove(emotion);
                   } else {
-                    setState(() {
-                      _selectedEmotions = [
-                        ..._selectedEmotions,
-                        emotion,
-                      ];
-                    });
+                    feelingsLog.add(emotion);
                   }
                 }
 
@@ -196,7 +191,8 @@ class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
                           alignment: WrapAlignment.spaceEvenly,
                           children:
                               emotionCategories[idx].emotions.map((emotion) {
-                            if (_selectedEmotions.contains(emotion)) {
+                            if (feelingsLog.selectedEmotions
+                                .contains(emotion)) {
                               return FilledButton(
                                 onPressed: () => handleEmotionSelected(emotion),
                                 child: Text(emotion),
@@ -240,23 +236,20 @@ class _ListWheelScrollViewAppState extends State<ListWheelScrollViewApp> {
               });
             },
           ),
-          Wrap(
-            direction: Axis.horizontal,
-            children: _selectedEmotions
-                .map((emotion) => Container(
-                      child: InputChip(
-                        label: Text(emotion),
-                        onDeleted: () {
-                          setState(() {
-                            _selectedEmotions = _selectedEmotions
-                                .where((element) => element != emotion)
-                                .toList();
-                          });
-                        },
-                      ),
-                    ))
-                .toList(),
-          ),
+          Consumer<FeelingsLogModel>(
+              builder: (context, feelingsLog, child) => Wrap(
+                    direction: Axis.horizontal,
+                    children: feelingsLog.selectedEmotions
+                        .map(
+                          (emotion) => InputChip(
+                            label: Text(emotion),
+                            onDeleted: () {
+                              feelingsLog.remove(emotion);
+                            },
+                          ),
+                        )
+                        .toList(),
+                  )),
         ],
       ),
     );
