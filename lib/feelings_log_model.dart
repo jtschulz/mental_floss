@@ -17,4 +17,9 @@ class FeelingsLogModel extends ChangeNotifier {
     _selectedEmotions.remove(emotion);
     notifyListeners();
   }
+
+  void removeAll() {
+    _selectedEmotions.removeWhere((_) => true);
+    notifyListeners();
+  }
 }

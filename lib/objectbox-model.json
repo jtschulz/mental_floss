@@ -1,0 +1,48 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:4389885730719814673",
+      "lastPropertyId": "4:5981654995189319721",
+      "name": "FeelingsLog",
+      "properties": [
+        {
+          "id": "1:6421049394267448041",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6922538078106187743",
+          "name": "emotions",
+          "type": 30
+        },
+        {
+          "id": "4:5981654995189319721",
+          "name": "createdAt",
+          "type": 10,
+          "flags": 8,
+          "indexId": "2:3844233059137177139"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "1:4389885730719814673",
+  "lastIndexId": "2:3844233059137177139",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [
+    5763420716916821539
+  ],
+  "retiredPropertyUids": [
+    1618192584080926588
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}
