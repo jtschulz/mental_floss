@@ -131,14 +131,15 @@ class _NewFeelingsLogPageState extends State<NewFeelingsLogPage> {
       floatingActionButton: Consumer<FeelingsLogModel>(
         builder: (context, feelingsLog, child) => Visibility(
           visible: feelingsLog.selectedEmotions.isNotEmpty,
-          child: FloatingActionButton(
+          child: FloatingActionButton.extended(
             elevation: 2,
+            label: const Text("Add"),
             onPressed: () {
               objectbox.feelingsLogsBox
                   .put(FeelingsLog(feelingsLog.selectedEmotions));
               feelingsLog.removeAll();
             },
-            child: const Icon(Icons.create),
+            icon: const Icon(Icons.add),
           ),
         ),
       ),
@@ -243,25 +244,52 @@ class _NewFeelingsLogPageState extends State<NewFeelingsLogPage> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Wrap(
-                          spacing: 2.0,
-                          alignment: WrapAlignment.spaceEvenly,
-                          children:
-                              emotionCategories[idx].emotions.map((emotion) {
-                            if (feelingsLog.selectedEmotions
-                                .contains(emotion)) {
-                              return FilledButton(
+                        Expanded(
+                          child: Wrap(
+                            spacing: 2.0,
+                            alignment: WrapAlignment.spaceEvenly,
+                            children:
+                                emotionCategories[idx].emotions.map((emotion) {
+                              if (feelingsLog.selectedEmotions
+                                  .contains(emotion)) {
+                                return FilledButton(
+                                  onPressed: () =>
+                                      handleEmotionSelected(emotion),
+                                  child: Text(emotion),
+                                );
+                              }
+                              return OutlinedButton(
                                 onPressed: () => handleEmotionSelected(emotion),
+                                style: const ButtonStyle(),
                                 child: Text(emotion),
                               );
-                            }
-                            return OutlinedButton(
-                              onPressed: () => handleEmotionSelected(emotion),
-                              style: const ButtonStyle(),
-                              child: Text(emotion),
-                            );
-                          }).toList(),
-                        )
+                            }).toList(),
+                          ),
+                        ),
+                        Consumer<FeelingsLogModel>(
+                          builder: (context, feelingsLog, child) => Visibility(
+                            visible: feelingsLog.selectedEmotions.isNotEmpty,
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                  right: 10,
+                                  bottom: 50,
+                                ),
+                                child: FloatingActionButton.extended(
+                                  elevation: 2,
+                                  label: const Text("Add"),
+                                  onPressed: () {
+                                    objectbox.feelingsLogsBox.put(FeelingsLog(
+                                        feelingsLog.selectedEmotions));
+                                    feelingsLog.removeAll();
+                                  },
+                                  icon: const Icon(Icons.add),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ));
               });
