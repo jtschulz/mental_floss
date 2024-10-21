@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mental_floss/app/view/dashboard_page.dart';
 import 'package:mental_floss/feelings_log_model.dart';
 import 'package:mental_floss/main.dart';
 import 'package:mental_floss/models.dart';
@@ -283,6 +284,12 @@ class _NewFeelingsLogPageState extends State<NewFeelingsLogPage> {
                                     objectbox.feelingsLogsBox.put(FeelingsLog(
                                         feelingsLog.selectedEmotions));
                                     feelingsLog.removeAll();
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const DashboardPage(),
+                                      ),
+                                    );
                                   },
                                   icon: const Icon(Icons.add),
                                 ),
